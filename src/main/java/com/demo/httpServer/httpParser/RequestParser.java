@@ -13,19 +13,22 @@ import static com.demo.httpServer.httpParser.HttpStatusCode.*;
 /*
  * This is head file of this package
  * We will be implementing continuous stream buffer to catch the error earlier and stop the parsing
+ *
+ * ----https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages----
+ *
  */
 
 /*
-* We will implement GET and HEAD first (Must according to RFC-7231)
-* Next we will extend this with POST
+ * We will implement GET and HEAD first (Must according to RFC-7231)
+ * Next we will extend this with POST
  */
 
 /*
-* GENERAL GUIDELINES
-* -Request methods are case sensitive
-* -It supports only US-ASCII codes
-* -Method is not recognised - 501 error
-* -Method is recognised but can't be executed - 405 error
+ * GENERAL GUIDELINES
+ * -Request methods are case sensitive
+ * -It supports only US-ASCII codes
+ * -Method is not recognised - 501 error
+ * -Method is recognised but can't be executed - 405 error
  */
 
 public class RequestParser {
@@ -54,7 +57,13 @@ public class RequestParser {
             e.printStackTrace();
         }
 
-        parseBody(reader, request);
+        if(request.getHeaderExistInfo("Content-Length")) {
+            try {
+                parseBody(reader, request);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         return request;
     }
@@ -126,7 +135,6 @@ public class RequestParser {
          * header1 + CRLF + CRLF
          * header1 + CRLF + header2 + CRLF + CRLF
          */
-
         int _byte;
         boolean headerCRLFSet = false;
         StringBuilder processingDataBuff = new StringBuilder();
@@ -163,7 +171,28 @@ public class RequestParser {
      * This method will in return call the appropriate Method Handler (GET, HEAD, POST)
      * HEAD is already satisfied as it doesn't have the content / body
      */
-    private void parseBody(InputStreamReader reader, HttpRequest request) {
-        // TODO
+    private void parseBody(InputStreamReader reader, HttpRequest request) throws IOException {
+        /*
+         * Content-Type: text/plain
+         * Content-Length: #number#
+         * Empty Line   ---> till here we are covered
+         * Actual Crappy Data
+         */
+        int _byte;
+        final int contentLen = Integer.parseInt(request.getHeaderValue("Content-Length"));
+        StringBuilder processingDataBuff = new StringBuilder();
+
+        while((_byte = reader.read()) >= 0) {
+            processingDataBuff.append((char) _byte);
+
+            if(processingDataBuff.length() == contentLen)
+                break;
+        }
+
+        String contentData = processingDataBuff.toString();
+        if(contentData != null) {
+            LOGGER.info("Processing content : {}" + contentData);
+            request.setContentBody(contentData);
+        }
     }
 }

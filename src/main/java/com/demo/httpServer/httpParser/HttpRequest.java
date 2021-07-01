@@ -16,6 +16,8 @@ public class HttpRequest{
     private HttpMethod method;
     private String methodTarget;
     private String httpVersion;
+    private String contentBody;
+
     private HashMap<String, String> headerList;
 
     /*
@@ -69,8 +71,15 @@ public class HttpRequest{
         return headerList;
     }
 
-    public String getHeaderValue(String key) throws RuntimeException {
+    public boolean getHeaderExistInfo(String key){
         if(this.headerList.containsKey(key)){
+            return true;
+        }
+        return false;
+    }
+
+    public String getHeaderValue(String key) throws RuntimeException {
+        if(getHeaderExistInfo(key)){
             return this.headerList.get(key);
         }
 
@@ -143,5 +152,13 @@ public class HttpRequest{
                 HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST
             );
         }
+    }
+
+    public String getContentBody() {
+        return contentBody;
+    }
+
+    public void setContentBody(String contentData) {
+        this.contentBody = contentData;
     }
 }
