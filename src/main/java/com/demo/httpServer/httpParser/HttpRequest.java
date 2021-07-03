@@ -9,6 +9,16 @@ package com.demo.httpServer.httpParser;
  * We will return this class to the HTTP Server to handle the request afterwards
  */
 
+/*
+ * HEAD is used to get status and headers (obtains metadata information)
+ * It is used to ask whether some file exist or not
+ * Also used in caching to check its consistency (match md5 checksum hash)
+ * Check if a document is changed after last accessed
+ * Check Links validity and accessibility
+
+ * GET is used to get status, headers and content.
+ * It is used to get complete page
+ */
 
 import java.util.HashMap;
 
@@ -24,9 +34,7 @@ public class HttpRequest{
     * Let us keep this class to package encapsulation level
     * As this will be called through RequestParser
      */
-    HttpRequest(){
-
-    }
+    HttpRequest(){ }
 
     /*
      * Request Line getters and setters
@@ -72,6 +80,9 @@ public class HttpRequest{
     }
 
     public boolean getHeaderExistInfo(String key){
+        if(this.headerList == null)
+            return false;
+
         if(this.headerList.containsKey(key)){
             return true;
         }

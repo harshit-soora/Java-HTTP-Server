@@ -1,11 +1,74 @@
-<!--<!DOCTYPE html>-->
-<html lang="en">
+<!doctype html>
+<html lang='en'>
+
 <head>
-  <meta charset="UTF-8">
-  <title>First Page</title>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css'>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>
+  <link href="https://fonts.googleapis.com/css2?family=PT+Sans&display=swap" rel="stylesheet">
 </head>
-<body>
-<h1>More coming Soon!</h1></br>
-<h4>Try on adding more pages in template section (resources) and call them with HttpServer</h4>
+
+<title>Client</title>
+
+<body style="font-family: 'PT Sans', sans-serif;">
+
+  <nav class='navbar navbar-expand-lg navbar-dark bg-dark'>
+    <div class='container-fluid' id='navbarNav'>
+      <ul class='nav navbar-nav navbar-brand'>
+        <li class='nav-item'>
+          <a class='navbar-brand' href='#'>Hello Developer</a>
+        </li>
+      </ul>
+      <ul class='nav navbar-nav ml-auto'>
+        <li class='nav-item active ml-4'>
+          <a class='nav-link' href='/request'>GET Request</a>
+        </li>
+        <li class='nav-item active ml-4'>
+          <a class='nav-link' href='/request'>POST Request</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container" style="color: grey;">
+    </br></br>
+    <p>The two features listed above are as follow-</p>
+    </br>
+    <ul>
+      <p>If you fire either Get Request or Post Request then you take to a page
+        where essentially you have to type in some data and click submit</p>
+    </ul>
+
+    </br>
+
+    <ul>
+      <p>If the request made is GET, then you can clearly see the data input in the
+        URL Bar as the data is passed as params inside the request header </p>
+    </ul>
+
+    </br>
+
+    <ul>
+      <p>Else if the request is POST, and the data input will be passed inside
+        the body of the request thus it is not shown on URL</p>
+    </ul>
+
+    </br>
+
+    <p>By clicking on either of the button you are making a GET request without header params set</p>
+
+    </br>
+
+  </div>
+
+  <div class="container">
+    <hr style="border: 5px solid grey;border-radius: 5px;" />
+    <footer>
+      <p>&copy; 2021 - Java HTTP Server - Harshit Soora</p>
+    </footer>
+  </div>
+
 </body>
+
 </html>
