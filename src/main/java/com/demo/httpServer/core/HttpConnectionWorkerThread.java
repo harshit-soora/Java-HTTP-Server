@@ -1,5 +1,8 @@
 package com.demo.httpServer.core;
 
+import com.demo.httpServer.httpParser.HttpRequest;
+import com.demo.httpServer.httpParser.ParsingException;
+import com.demo.httpServer.httpParser.RequestParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,9 +20,13 @@ public class HttpConnectionWorkerThread extends Thread{
 
     private final static Logger LOGGER = LoggerFactory.getLogger(HttpConnectionWorkerThread.class);
     private Socket socket;
+    private String htmlData;
 
-    public HttpConnectionWorkerThread(Socket socket) {
+    final String CRLF = "\r\n"; // 13, 10 //package encapsulation
+
+    public HttpConnectionWorkerThread(Socket socket, String html) {
         this.socket = socket;
+        this.htmlData = html;
     }
 
     @Override
@@ -38,19 +45,22 @@ public class HttpConnectionWorkerThread extends Thread{
             inputStream = socket.getInputStream();
             outputStream = socket.getOutputStream();
 
-            HtmlFileLoader loader = new HtmlFileLoader("src/main/resources/templates/index.html");
-            String html = loader.getHtmlData();
-
-            final String CRLF = "\r\n"; // 13, 10
-
             String response =
                     "HTTP/1.1 200 OK" + CRLF + // Status Line  :   HTTP_VERSION RESPONSE_CODE RESPONSE_MESSAGE
-                            "Content-Length: " + html.getBytes().length + CRLF + // HEADER
-                            CRLF +
-                            html +
-                            CRLF + CRLF;
+                    "Content-Length: " + htmlData.getBytes().length + CRLF + // HEADER
+                    CRLF +
+                    htmlData +  // CONTENT
+                    CRLF + CRLF;
 
             outputStream.write(response.getBytes());
+
+            RequestParser reqParser = new RequestParser();
+            try {
+                HttpRequest request = reqParser.parseHttpRequest(inputStream);
+                new HttpRequestHandler(request);
+            } catch (ParsingException e) {
+                e.printStackTrace();
+            }
 
             LOGGER.info(" * Connection Processing Finished.");
         } catch (IOException e) {
