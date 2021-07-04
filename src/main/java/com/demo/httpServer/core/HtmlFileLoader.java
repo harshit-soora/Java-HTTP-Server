@@ -14,7 +14,7 @@ public class HtmlFileLoader {
         try {
             reader = new FileReader(filePath);
         } catch (FileNotFoundException e) {
-            throw new HttpConfigurationException("File path for Config file is Invalid.", e);
+            throw new HttpConfigurationException("File path for HTML file is Invalid : " + filePath, e);
         }
         StringBuffer buff = new StringBuffer();
 
@@ -23,7 +23,7 @@ public class HtmlFileLoader {
             try {
                 if ((i = reader.read()) == -1) break;
             } catch (IOException e) {
-                throw new HttpConfigurationException("Error while reading Json file : Config", e);
+                throw new HttpConfigurationException("Error while reading HTML file : " + filePath, e);
             }
             buff.append((char)i);
         }
