@@ -20,13 +20,11 @@ public class HttpConnectionWorkerThread extends Thread{
 
     private final static Logger LOGGER = LoggerFactory.getLogger(HttpConnectionWorkerThread.class);
     private Socket socket;
-    private String htmlData;
 
     final String CRLF = "\r\n"; // 13, 10 //package encapsulation
 
-    public HttpConnectionWorkerThread(Socket socket, String html) {
+    public HttpConnectionWorkerThread(Socket socket) {
         this.socket = socket;
-        this.htmlData = html;
     }
 
     @Override
@@ -40,11 +38,19 @@ public class HttpConnectionWorkerThread extends Thread{
         // or these may be initial webpage's HTML data
         OutputStream outputStream = null;
 
-
         try {
             inputStream = socket.getInputStream();
-            outputStream = socket.getOutputStream();
+            RequestParser reqParser = new RequestParser();
+            String htmlData = null;
+            try {
+                HttpRequest request = reqParser.parseHttpRequest(inputStream);
+                HttpRequestHandler reqHandler = new HttpRequestHandler(request, socket);
+                htmlData = reqHandler.setView();
+            } catch (ParsingException e) {
+                e.printStackTrace();
+            }
 
+            outputStream = socket.getOutputStream();
             String response =
                     "HTTP/1.1 200 OK" + CRLF + // Status Line  :   HTTP_VERSION RESPONSE_CODE RESPONSE_MESSAGE
                     "Content-Length: " + htmlData.getBytes().length + CRLF + // HEADER
@@ -53,19 +59,11 @@ public class HttpConnectionWorkerThread extends Thread{
                     CRLF + CRLF;
 
             outputStream.write(response.getBytes());
-
-            RequestParser reqParser = new RequestParser();
-            try {
-                HttpRequest request = reqParser.parseHttpRequest(inputStream);
-                new HttpRequestHandler(request, socket);
-            } catch (ParsingException e) {
-                e.printStackTrace();
-            }
-
-            LOGGER.info(" * Connection Processing Finished.");
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             LOGGER.error("Problem with communication", e);
-        } finally {
+        }
+        finally {
             if (inputStream!= null) {
                 try {
                     inputStream.close();

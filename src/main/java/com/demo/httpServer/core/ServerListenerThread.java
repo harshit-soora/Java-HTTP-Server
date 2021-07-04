@@ -36,11 +36,10 @@ public class ServerListenerThread extends Thread{
 
                 LOGGER.info(" * Connection accepted: " + socket.getInetAddress());
 
-                HtmlFileLoader loader = new HtmlFileLoader("src/main/resources/templates/index.html");
-                String html = loader.getHtmlData();
-
-                HttpConnectionWorkerThread workerThread = new HttpConnectionWorkerThread(socket, html);
+                HttpConnectionWorkerThread workerThread = new HttpConnectionWorkerThread(socket);
                 workerThread.start();
+
+                LOGGER.info(" * Connection Processing Finished.");
             }
         } catch (IOException e) {
             LOGGER.error("Problem with setting socket", e);

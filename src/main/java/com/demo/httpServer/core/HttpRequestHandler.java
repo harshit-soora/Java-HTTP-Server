@@ -20,5 +20,27 @@ public class HttpRequestHandler {
         this.httpRequest = req;
     }
 
-    // TODO
+    /*
+     * This code will set the view based upon the request from the server
+     * This may in return call some private functions based upon the request target
+     */
+    public String setView(){
+        String reqTarget = httpRequest.getMethodTarget();
+        String html;
+        HtmlFileLoader loader;
+
+        if(reqTarget == null){
+            loader = new HtmlFileLoader("src/main/resources/templates/index.html");
+            html = loader.getHtmlData();
+        }
+        else if(reqTarget.equals("/request")){
+            loader = new HtmlFileLoader("src/main/resources/templates" + reqTarget + ".html");
+            html = loader.getHtmlData();
+        }
+        else{// reqTarget.equals("/") // As we are only requested for the home page
+            loader = new HtmlFileLoader("src/main/resources/templates/index.html");
+            html = loader.getHtmlData();
+        }
+        return html;
+    }
 }
