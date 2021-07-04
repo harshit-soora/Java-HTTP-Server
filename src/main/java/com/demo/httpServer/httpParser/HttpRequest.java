@@ -2,9 +2,7 @@ package com.demo.httpServer.httpParser;
 
 /*
  * Called from Request Parser to extract the specific field  of the request
- */
 
-/*
  * All the fields for HTTP Request will be set inside this Java Class
  * We will return this class to the HTTP Server to handle the request afterwards
  */
@@ -27,14 +25,20 @@ public class HttpRequest{
     private String methodTarget;
     private String httpVersion;
     private String contentBody;
-
     private HashMap<String, String> headerList;
 
     /*
-    * Let us keep this class to package encapsulation level
-    * As this will be called through RequestParser
+     * Let us keep this class to package encapsulation level
+     * As this will be called through RequestParser
+     * All SETTERS will be of package privileged
+
+     * First we set the headerList file to check if some malicious header
+     * is not passed into the request
      */
-    HttpRequest(){ }
+    HttpRequest(){
+        HttpHeader.getInstance().loadHeaderList("src/main/resources/headerList.txt");
+    }
+
 
     /*
      * Request Line getters and setters
@@ -60,7 +64,7 @@ public class HttpRequest{
         return httpVersion;
     }
 
-    public void setHttpVersion(String httpVersion) {
+    void setHttpVersion(String httpVersion) {
         this.httpVersion = httpVersion;
     }
 
@@ -68,9 +72,10 @@ public class HttpRequest{
         return methodTarget;
     }
 
-    public void setMethodTarget(String methodTarget) {
+    void setMethodTarget(String methodTarget) {
         this.methodTarget = methodTarget;
     }
+
 
     /*
      * Header Field getters and setters
@@ -98,7 +103,7 @@ public class HttpRequest{
     }
 
     // Here we need to extract the key and values from raw string
-    public void setHeaderRaw(String rawHeaderData) throws ParsingException, RuntimeException {
+    void setHeaderRaw(String rawHeaderData) throws ParsingException, RuntimeException {
         String key=null;
         String value=null;
 
@@ -107,7 +112,6 @@ public class HttpRequest{
         int start=-1;
         boolean keySet = false;
         boolean keySetHard = false;
-        String buff;
         while(i < rawHeaderData.length()){
             if(rawHeaderData.charAt(i)==':' && !keySet) {
                 keySet = true;
@@ -126,50 +130,44 @@ public class HttpRequest{
         if(keySet && start != -1){
             value = rawHeaderData.substring(start, i);
         }
-
         setHeader(key, value);
     }
 
-    public void setHeader(String key, String value) throws ParsingException{
-        if(this.headerList == null)
+    void setHeader(String key, String value) throws ParsingException{
+        if(this.headerList == null) {
             this.headerList = new HashMap<String, String>();
-
+        }
         if(key==null){
             throw new RuntimeException("Error extracting the header key");
         }
+        if(value==null){
+            throw new ParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
+        }
 
-        HttpHeader.getInstance().loadHeaderList("src/main/resources/headerList.txt");
         boolean validHeader = HttpHeader.getInstance().validateHeader(key);
-
-        if(!validHeader) {
-            System.out.println(key);
-            System.out.println(value);
-            // No such header exist
+        if(!validHeader) { // No such header exist
             throw new ParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
         }
 
         if(!this.headerList.containsKey(key)){
-            if(value != null)
-                this.headerList.put(key, value);
-            else
-                throw new ParsingException(
-                    HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST
-                );
+            this.headerList.put(key, value);
         }
-
-        else {
-            // Two headers of similar key are passed inside the request
+        else { // Two headers of similar key are passed inside the request
             throw new ParsingException(
                 HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST
             );
         }
     }
 
+
+    /*
+     * Content Field getters and setters
+     */
     public String getContentBody() {
         return contentBody;
     }
 
-    public void setContentBody(String contentData) {
+    void setContentBody(String contentData) {
         this.contentBody = contentData;
     }
 }

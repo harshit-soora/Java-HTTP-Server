@@ -57,7 +57,7 @@ public class HttpConnectionWorkerThread extends Thread{
             RequestParser reqParser = new RequestParser();
             try {
                 HttpRequest request = reqParser.parseHttpRequest(inputStream);
-                new HttpRequestHandler(request);
+                new HttpRequestHandler(request, socket);
             } catch (ParsingException e) {
                 e.printStackTrace();
             }
