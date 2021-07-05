@@ -16,6 +16,27 @@
   <div class="container" style="color: grey;">
       <!--Will use a form tag here to access data from the user and fire a GET or POST
       request based upon the type of submit button-->
+    <br><br>
+    <form method="POST" action="/response">
+      Enter your name:
+      <input type="text" name="name" /><br><br>
+
+      Enter a message:
+      <input type="text" name="data" /><br><br>
+
+      <input type="submit" name="_post" value="POST Request">
+    </form>
+    <br><br>
+    <form method="GET" action="/response">
+      Enter your name:
+      <input type="text" name="name" /><br><br>
+
+      Enter a message:
+      <input type="text" name="data" /><br><br>
+
+      <input type="submit" name="_get" value="GET Request">
+    </form>
+    <br><br>
   </div>
 
   <div class="container">

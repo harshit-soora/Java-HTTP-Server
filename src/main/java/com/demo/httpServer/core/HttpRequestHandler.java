@@ -37,6 +37,22 @@ public class HttpRequestHandler {
             loader = new HtmlFileLoader("src/main/resources/templates" + reqTarget + ".html");
             html = loader.getHtmlData();
         }
+        else if( reqTarget.length() > 8){
+            if(reqTarget.substring(0, 9).equals("/response")){
+                if(httpRequest.getMethod().toString().equals("GET")){
+                    // Here we need to fetch the data from the url itself
+                }
+                else if(httpRequest.getMethod().toString().equals("POST")){
+                    // Here we need to fetch the data from the content field
+                }
+                loader = new HtmlFileLoader("src/main/resources/templates/response.html");
+                html = loader.getHtmlData();
+            }
+            else{
+                loader = new HtmlFileLoader("src/main/resources/templates/index.html");
+                html = loader.getHtmlData();
+            }
+        }
         else{// reqTarget.equals("/") // As we are only requested for the home page
             loader = new HtmlFileLoader("src/main/resources/templates/index.html");
             html = loader.getHtmlData();
