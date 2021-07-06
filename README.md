@@ -26,7 +26,7 @@ Choose Class for it via Search by Name option
 > Build and Run
 ```
 Select any configuration in above two
-Fire the Hammer and then press the green play button 
+Strike the Hammer and then fire the green play button 
 ```
 
 > Open in browser
@@ -34,4 +34,9 @@ Fire the Hammer and then press the green play button
 http://localhost:8000/
 Now you are good to go ;)
 ```
+
+### Issues
+> There are no compile/ runtime issues at all 
+> Every issue is just a security update and more convinent experience for a new learner
+
 
